@@ -7,5 +7,5 @@ meta_data = MetaData()
 
 sync_engine = create_engine(
     url=settings.DATABASE_URL_syncpg(),
-    echo=True
+    echo=False
 )
