@@ -1,2 +1,5 @@
 sqlalchemy
 pydantic_settings
+asyncpg
+psycopg
+psycopg-binary

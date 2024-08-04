@@ -6,8 +6,16 @@
 #
 annotated-types==0.7.0
     # via pydantic
+async-timeout==4.0.3
+    # via asyncpg
+asyncpg==0.29.0
+    # via -r requirements.in
 greenlet==3.0.3
     # via sqlalchemy
+psycopg==3.2.1
+    # via -r requirements.in
+psycopg-binary==3.2.1
+    # via -r requirements.in
 pydantic==2.8.2
     # via pydantic-settings
 pydantic-core==2.20.1
@@ -20,6 +28,9 @@ sqlalchemy==2.0.31
     # via -r requirements.in
 typing-extensions==4.12.2
     # via
+    #   psycopg
     #   pydantic
     #   pydantic-core
     #   sqlalchemy
+tzdata==2024.1
+    # via psycopg
