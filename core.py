@@ -1,12 +1,14 @@
-from sqlalchemy import select, update, insert
+from sqlalchemy import select, update, insert, join
 
 from database import sync_engine, meta_data
-from models import log_table
+from models import log_table, users_table
 
 
 def create_tables():
+    sync_engine.echo = False
     meta_data.drop_all(sync_engine)
     meta_data.create_all(sync_engine)
+    sync_engine.echo = True
 
 def insert_logs(logs: list[dict]):
     with sync_engine.connect() as conn:
@@ -16,13 +18,35 @@ def insert_logs(logs: list[dict]):
 
 def show_logs():
     with sync_engine.connect() as conn:
-        query = select(log_table)
+        query = select(log_table.c.id, 
+                       log_table.c.user_id, 
+                       users_table.c.surname, 
+                       users_table.c.role, 
+                       log_table.c.action, 
+                       log_table.c.at
+                       ).select_from(
+                            join(users_table, log_table, 
+                            users_table.c.id == log_table.c.user_id)
+                                    )
         res = conn.execute(query).all()
         for log in res:
             print(*log)
 
-def update_worker_name_in_logs(user_id: int, new_surname: str):
+def add_user(surname: str, role: str):
     with sync_engine.connect() as conn:
-        stmt = update(log_table).values(surname=new_surname).filter_by(user_id=user_id)
+        stmt = insert(users_table).values([{"surname": surname, "role": role}])
+        conn.execute(stmt)
+        conn.commit()
+
+def show_users():
+    with sync_engine.connect() as conn:
+        query = select(users_table)
+        res = conn.execute(query)
+        for user in res:
+            print(*user)
+
+def update_worker_surname(user_id: int, new_surname: str):
+    with sync_engine.connect() as conn:
+        stmt = update(users_table).values(surname=new_surname).filter_by(id=user_id)
         conn.execute(stmt)
         conn.commit()
