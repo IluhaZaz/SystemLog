@@ -1,13 +1,16 @@
-from core import create_tables, insert_logs, show_logs, add_user, show_users, update_worker_surname
+from core import SystemCoreSync
 
 
-create_tables()
-add_user("Safronov", "boss")
-add_user("Kostenko", "worker")
-show_users()
-insert_logs([
+s = SystemCoreSync()
+
+s.create_tables()
+s.add_user("Safronov", "boss")
+s.add_user("Kostenko", "worker")
+s.show_users()
+s.insert_logs([
     {"user_id": 1, "action": "enter"},
     {"user_id": 2, "action": "enter"},
     {"user_id": 1, "action": "quit"}
 ])
-show_logs()
+s.update_worker_data(user_id=1, new_role="worker")
+s.show_logs()
