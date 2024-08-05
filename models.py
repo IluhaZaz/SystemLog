@@ -24,9 +24,12 @@ class LogTable(Base):
     action: Mapped[Action]
     at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
 
+    def __repr__(self) -> str:
+        return f"{self.id}|{self.user_id}|{self.action.value}|{self.at}"
+
 
 class Role(Enum):
-    boss = "chief"
+    chief = "chief"
     deputy_chief = "deputy_chief"
     worker = "worker"
     user = "user"
@@ -38,6 +41,9 @@ class UsersTable(Base):
     id: Mapped[intpk]
     surname: Mapped[str]
     role: Mapped[Role]
+
+    def __repr__(self) -> str:
+        return f"{self.id}|{self.surname}|{self.role.value}"
 
 
 #imperative style

@@ -26,6 +26,8 @@ python-dotenv==1.0.1
     # via pydantic-settings
 sqlalchemy==2.0.31
     # via -r requirements.in
+tabulate==0.9.0
+    # via -r requirements.in
 typing-extensions==4.12.2
     # via
     #   psycopg

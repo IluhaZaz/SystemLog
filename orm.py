@@ -1,3 +1,6 @@
+from sqlalchemy import select
+from tabulate import tabulate
+
 from database import sync_engine, sync_session_factory, Base
 from models import LogTable, Role, UsersTable
 
@@ -18,7 +21,33 @@ class SystemORMSync:
             session.commit()
     
     @staticmethod
+    def show_logs():
+        with sync_session_factory() as session:
+            query = select(LogTable)
+            res = session.execute(query).scalars().all()
+            res = [repr(log).split("|") for log in res]
+            print(tabulate(res, headers=("id", "user_id", "action", "at"), tablefmt="double_outline"))
+    
+    @staticmethod
     def add_user(surname: str, role: Role):
         with sync_session_factory() as session:
             session.add(UsersTable(surname=surname, role=role))
+            session.commit()
+
+    @staticmethod
+    def show_users():
+        with sync_session_factory() as session:
+            query = select(UsersTable)
+            res = session.execute(query).scalars().all()
+            res = [repr(user).split("|") for user in res]
+            print(tabulate(res, headers=("id", "surname", "role"), tablefmt="double_outline"))
+    
+    @staticmethod
+    def update_worker_data(user_id: int, new_surname: str = None, new_role: str = None):
+        with sync_session_factory() as session:
+            user = session.get(UsersTable, user_id)
+            if new_surname:
+                user.surname = new_surname
+            if new_role:
+                user.role = new_role
             session.commit()
