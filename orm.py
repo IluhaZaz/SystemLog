@@ -1,4 +1,5 @@
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from tabulate import tabulate
 
 from database import sync_engine, sync_session_factory, Base
@@ -21,7 +22,7 @@ class SystemORMSync:
             session.commit()
     
     @staticmethod
-    def show_logs():
+    def show_logs(user_id: int = None):
         with sync_session_factory() as session:
             query = select(LogTable.id, 
                         LogTable.user_id, 
@@ -29,7 +30,20 @@ class SystemORMSync:
                         UsersTable.role, 
                         LogTable.action, 
                         LogTable.at).join(UsersTable, UsersTable.id == LogTable.user_id)
+            if user_id:
+                query = query.filter_by(id=user_id)
             res = session.execute(query).all()
+            print(tabulate(res, headers=("id", "user_id", "surname", "role", "action", "at"), tablefmt="double_grid"))
+    
+    @staticmethod
+    def show_logs_by_user():
+        with sync_session_factory() as session:
+            query = select(UsersTable).options(selectinload(UsersTable.logs))
+            result = session.execute(query).unique().scalars().all()
+            res = []
+            for user in result:
+                res += user.logs
+            res = [repr(log).split("|") for log in res]
             print(tabulate(res, headers=("id", "user_id", "surname", "role", "action", "at"), tablefmt="double_grid"))
     
     @staticmethod
@@ -39,11 +53,12 @@ class SystemORMSync:
             session.commit()
 
     @staticmethod
-    def show_users():
+    def show_users(user_id: int = None):
         with sync_session_factory() as session:
             query = select(UsersTable)
+            if user_id:
+                query = query.filter_by(id=user_id)
             res = session.execute(query).scalars().all()
-            print(res)
             res = [repr(user).split("|") for user in res]
             print(tabulate(res, headers=("id", "surname", "role"), tablefmt="double_grid"))
     

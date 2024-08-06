@@ -1,6 +1,6 @@
 from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey, text
 from sqlalchemy.sql import func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Annotated
 from enum import Enum
 from datetime import datetime
@@ -26,6 +26,7 @@ class LogTable(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     action: Mapped[Action]
     at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
+    user: Mapped["UsersTable"] = relationship(back_populates="logs")
 
     def __repr__(self) -> str:
         return f"{self.id}|{self.user_id}|{self.action}|{self.at}"
@@ -47,6 +48,7 @@ class UsersTable(Base):
     id: Mapped[intpk]
     surname: Mapped[str]
     role: Mapped[Role]
+    logs: Mapped[list["LogTable"]] = relationship(back_populates="user")
 
     def __repr__(self) -> str:
         return f"{self.id}|{self.surname}|{self.role}"
