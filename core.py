@@ -1,4 +1,5 @@
 from sqlalchemy import select, update, insert, join
+from tabulate import tabulate
 
 from database import sync_engine, meta_data
 from models import log_table, users_table
@@ -34,8 +35,7 @@ class SystemCoreSync:
                                 users_table.c.id == log_table.c.user_id)
                                         )
             res = conn.execute(query).all()
-            for log in res:
-                print(*log)
+            print(tabulate(res, headers=("id", "user_id", "surname", "role", "action", "at"), tablefmt="double_grid"))
 
     @staticmethod
     def add_user(surname: str, role: str):
@@ -49,8 +49,7 @@ class SystemCoreSync:
         with sync_engine.connect() as conn:
             query = select(users_table)
             res = conn.execute(query)
-            for user in res:
-                print(*user)
+            print(tabulate(res, headers=("id", "surname", "role"), tablefmt="double_grid"))
 
     @staticmethod
     def update_worker_data(user_id: int, new_surname: str = None, new_role: str = None):

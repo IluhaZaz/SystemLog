@@ -16,6 +16,9 @@ class Action(Enum):
     enter = "enter"
     quit = "quit"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class LogTable(Base):
     __tablename__ = "log"
@@ -25,7 +28,7 @@ class LogTable(Base):
     at: Mapped[datetime] = mapped_column(server_default=text("TIMEZONE('utc', now())"))
 
     def __repr__(self) -> str:
-        return f"{self.id}|{self.user_id}|{self.action.value}|{self.at}"
+        return f"{self.id}|{self.user_id}|{self.action}|{self.at}"
 
 
 class Role(Enum):
@@ -35,6 +38,9 @@ class Role(Enum):
     user = "user"
     fired = "fired"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class UsersTable(Base):
     __tablename__ = "users"
@@ -43,7 +49,7 @@ class UsersTable(Base):
     role: Mapped[Role]
 
     def __repr__(self) -> str:
-        return f"{self.id}|{self.surname}|{self.role.value}"
+        return f"{self.id}|{self.surname}|{self.role}"
 
 
 #imperative style
