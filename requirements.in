@@ -4,3 +4,5 @@ asyncpg
 psycopg
 psycopg-binary
 tabulate
+alembic
+black
