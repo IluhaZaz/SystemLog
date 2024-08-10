@@ -44,7 +44,7 @@ class SystemORMSync:
             for user in result:
                 res += user.logs
             res = [repr(log).split("|") for log in res]
-            print(tabulate(res, headers=("id", "user_id", "surname", "role", "action", "at"), tablefmt="double_grid"))
+            print(tabulate(res, headers=("id", "user_id", "action", "at"), tablefmt="double_grid"))
     
     @staticmethod
     def add_user(surname: str, role: Role):
@@ -113,7 +113,7 @@ class SystemORMAsync:
             for user in result:
                 res += user.logs
             res = [repr(log).split("|") for log in res]
-            print(tabulate(res, headers=("id", "user_id", "surname", "role", "action", "at"), tablefmt="double_grid"))
+            print(tabulate(res, headers=("id", "user_id", "action", "at"), tablefmt="double_grid"))
     
     @staticmethod
     async def add_user(surname: str, role: Role):
