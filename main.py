@@ -1,17 +1,16 @@
 import asyncio
 import argparse
 
-from time import sleep
+from core.dao import SystemDAOSync, SystemDAOAsync
+from core.orm import SystemORMSync, SystemORMAsync
+from models.models import Action, LogTable, Role
 
-from core import SystemCoreSync, SystemCoreAsync
-from orm import SystemORMSync, SystemORMAsync
-from models import Action, LogTable, Role
 
 parser = argparse.ArgumentParser()
 
-core_or_orm_group = parser.add_mutually_exclusive_group()
-core_or_orm_group.add_argument('-c', '--core', action="store_true")
-core_or_orm_group.add_argument('-o', '--orm', action="store_true")
+dao_or_orm_group = parser.add_mutually_exclusive_group()
+dao_or_orm_group.add_argument('-d', '--core', action="store_true")
+dao_or_orm_group.add_argument('-o', '--orm', action="store_true")
 
 sync_or_async = parser.add_mutually_exclusive_group()
 sync_or_async.add_argument('-s', '--sync', action="store_true")
@@ -19,21 +18,20 @@ sync_or_async.add_argument('-a', '--async', action="store_true")
 
 args = parser.parse_args()
 args = dict(args._get_kwargs())
-print(args)
 
 if args["sync"]:
     if args["core"]:
-        SystemCoreSync.create_tables()
-        SystemCoreSync.add_user("Safronov", "boss")
-        SystemCoreSync.add_user("Kostenko", "worker")
-        SystemCoreSync.show_users()
-        SystemCoreSync.insert_logs([
+        SystemDAOSync.create_tables()
+        SystemDAOSync.add_user("Safronov", "boss")
+        SystemDAOSync.add_user("Kostenko", "worker")
+        SystemDAOSync.show_users()
+        SystemDAOSync.insert_logs([
             {"user_id": 1, "action": "enter"},
             {"user_id": 2, "action": "enter"},
             {"user_id": 1, "action": "quit"}
         ])
-        SystemCoreSync.update_worker_data(user_id=1, new_role="worker")
-        SystemCoreSync.show_logs()
+        SystemDAOSync.update_worker_data(user_id=1, new_role="worker")
+        SystemDAOSync.show_logs()
 
     elif args["orm"]:
         SystemORMSync.create_tables()
@@ -50,7 +48,6 @@ if args["sync"]:
                         LogTable(user_id=2, action = Action.enter),
                         LogTable(user_id=1, action = Action.quit)
                         ])
-        sleep(5)
         SystemORMSync.insert_logs([
                         LogTable(user_id=2, action = Action.quit),
                         LogTable(user_id=3, action = Action.enter),
@@ -66,17 +63,17 @@ if args["sync"]:
 elif args["async"]:
     if args["core"]:
         async def main():
-            await SystemCoreAsync.create_tables()
-            await SystemCoreAsync.add_user("Safronov", "boss")
-            await SystemCoreAsync.add_user("Kostenko", "worker")
-            await SystemCoreAsync.show_users()
-            await SystemCoreAsync.insert_logs([
+            await SystemDAOAsync.create_tables()
+            await SystemDAOAsync.add_user("Safronov", "boss")
+            await SystemDAOAsync.add_user("Kostenko", "worker")
+            await SystemDAOAsync.show_users()
+            await SystemDAOAsync.insert_logs([
                 {"user_id": 1, "action": "enter"},
                 {"user_id": 2, "action": "enter"},
                 {"user_id": 1, "action": "quit"}
             ])
-            await SystemCoreAsync.update_worker_data(user_id=1, new_role="worker")
-            await SystemCoreAsync.show_logs()
+            await SystemDAOAsync.update_worker_data(user_id=1, new_role="worker")
+            await SystemDAOAsync.show_logs()
 
         asyncio.get_event_loop().run_until_complete(main())
 
@@ -96,7 +93,6 @@ elif args["async"]:
                             LogTable(user_id=2, action = Action.enter),
                             LogTable(user_id=1, action = Action.quit)
                             ])
-            sleep(5)
             await SystemORMAsync.insert_logs([
                             LogTable(user_id=2, action = Action.quit),
                             LogTable(user_id=3, action = Action.enter),

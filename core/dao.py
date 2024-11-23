@@ -2,10 +2,10 @@ from sqlalchemy import select, update, insert, join
 from tabulate import tabulate
 
 from database import sync_engine, async_engine, meta_data
-from models import log_table, users_table
+from models.models import log_table, users_table
 
 
-class SystemCoreSync:
+class SystemDAOSync:
 
     @staticmethod
     def create_tables():
@@ -63,7 +63,7 @@ class SystemCoreSync:
             conn.commit()
 
 
-class SystemCoreAsync:
+class SystemDAOAsync:
 
     @staticmethod
     async def create_tables():

@@ -8,7 +8,7 @@ from alembic import context
 from config import settings
 
 #need to import all files with models
-from models import UsersTable #noqa
+from models.models import UsersTable #noqa
 from database import Base
 
 # this is the Alembic Config object, which provides
